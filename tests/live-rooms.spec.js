@@ -7,6 +7,7 @@ const fs = require('fs');
 const { recordingsReady, restoreRooms } = require('../lib/contracts');
 const coordination = require('../lib/coordination');
 const { qaTitle } = require('../lib/qa-data');
+const { buildEvidence } = require('./fixtures/build-evidence');
 let dataLock;
 
 
@@ -36,6 +37,8 @@ test.afterAll(async () => {
   if (failures.length) throw new Error('CLEANUP FAILED: see cleanup-result-<pid>.json; keep data lock and restore these QA ids manually');
   coordination.release(dataLock);
 });
+
+test.afterEach(async({},testInfo)=> { if (owner) await buildEvidence(owner.page,testInfo); });
 
 test('S-1 окружение: вход выдаёт JWT и wss-адрес медиасервера (не localhost)', async () => {
   const id = await live('S-1');
@@ -228,4 +231,24 @@ test('M-10 закрывший браузер участник уходит из 
   expect(before.length).toBeGreaterThan(0);
   await tmp.ctx.close(); // без «Выйти»
   await expect.poll(async () => (await h.inside(owner.page, id)).length, { timeout: 90000, intervals: [10000] }).toBe(before.length - 1);
+});
+
+// Host lobby mobile regression: not student-role or native-app coverage.
+for (const [width,height] of [[375,812],[390,844],[844,390]]) test(`M-11 mobile lobby ${width}x${height}: normal title/description leave join reachable`, async({browser},testInfo)=> {
+  const id=await newRoom('Mobile lobby title and description', { description:'QA-description '.padEnd(83,'text ').slice(0,83) });
+  expect((await h.start(owner.page,id)).status).toBe(200);
+  await owner.page.goto(h.BASE+'/admin/live-rooms'); // do not leave an active host tab in another room
+  const context=await browser.newContext({ storageState:await owner.ctx.storageState(),viewport:{width,height},isMobile:true,hasTouch:true,deviceScaleFactor:3,locale:'ru-RU',permissions:['camera','microphone'] });
+  const { failureScreenshot } = require('./fixtures/read-only');
+  try {
+    const page=await context.newPage(); const response=await page.goto(`${h.BASE}/live-rooms/${id}`);
+    await buildEvidence(page,testInfo,'mobile-lobby-build');
+    expect(response.status(),'M-11 own host lobby HTTP').toBe(200);
+    const join=page.getByRole('button',{name:/Войти в комнату/}).first();
+    await expect(join).toBeVisible();
+    await join.scrollIntoViewIfNeeded();
+    await expect(join,'M-11 join must be reachable by scrolling on a mobile device').toBeInViewport({ratio:1});
+    await join.tap({timeout:5000});
+    await expect(page.getByRole('button',{name:'Выйти из встречи'})).toBeAttached({timeout:30000});
+  } finally { await failureScreenshot(context,testInfo); await context.close(); }
 });

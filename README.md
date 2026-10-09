@@ -4,11 +4,11 @@
 
 | Набор | Команда | Реализовано | Инструкции |
 |---|---|---|---|
-| Live-комнаты | `npm run test:live` | 11 целевых сценариев | [Live](docs/features/live-rooms.md) |
-| Рефералка ядра | `npm run test:referral` | 4 desktop/core + 4 device mode сценария | [Referral](docs/features/referral.md) |
+| Live-комнаты | `npm run test:live` | 14 целевых сценариев | [Live](docs/features/live-rooms.md) |
+| Рефералка ядра | `npm run test:referral` | 24: core/admin desktop + mobile 320–390, withdrawal touch | [Referral](docs/features/referral.md) |
 | Общий smoke | `npm run test:smoke` | Выборка S-1/H-1/Вход и RF-1/2/3 | Обе feature инструкции; пропуски = пробел |
 | Контракты/locks | `npm run test:unit` | 9 pure/local проверок, без браузера | [Validation](docs/VALIDATION.md) |
-| Всё реализованное | `npm test` | 19 integration сценариев, не весь QA | Сначала согласованный слот/roles/env |
+| Всё реализованное | `npm test` | 38 integration сценариев, не весь QA | Сначала согласованный слот/roles/env |
 
 [Индекс покрытия и план базового регресса](docs/FEATURE-INDEX.md). Существующий auth внутри live role setup не объявляется отдельным базовым auth тестом. Registration/product/course/tariff пока только план миграции старых тестов после расследования контрактов.
 

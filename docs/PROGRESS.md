@@ -9,3 +9,7 @@
 Единый framework: общий origin/lock, read-only context/failurePNG, feature contracts. Добавлены RF-1..5:8 сценариев, отдельные команды live/referral и общий feature smoke. Unit9/9; discovery19; syntaxPASS. IntegrationNOT RUN. Следующий шаг: согласованный fixture slot +source discount → selective feature launch → actual proof → update human report; базовые auth/registration/product/course/tariff только план.
 
 Текущий профиль уточнён09.10: ядро и четыре приоритетных бренда в qa-scope.json; автоматический brand traversal отсутствует. Продуктовые посещения этой ревизией не выполнялись.
+
+## Platformax-first ·09.10.2026
+
+Профиль актуализирован: основной Platformax admin/LKdesktop/mobile +studentAndroid/iOS +newAdminiOS. Бренды — supplemental/nonblocking. Автоматизация расширена:14live (11desktop +3hostmobile-lobby),24referral (15coretabs/promo/discount +5adminfield +4withdrawal touch). Новый общий слой filtered build evidence, без полных props/secrets. Discovery38, smoke6; unit9/9 и syntaxPASS. IntegrationNOT RUN: liveQA использует общую учётку/свою активную запись; не перехватывать. Native suites отсутствуют, N/A по одному экрану запрещён. Стоимость записи согласована в текущей задаче, прежний costblocker снят; HTMLblocker снят координатором, visual validation остаётся отдельным фактическим шагом.

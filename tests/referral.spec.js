@@ -8,6 +8,7 @@ const config = configuration();
 const BASE = config.baseURL;
 const coordination = require('../lib/coordination');
 const { readOnlyContext, failureScreenshot } = require('./fixtures/read-only');
+const { buildEvidence } = require('./fixtures/build-evidence');
 let dataLock;
 const test = base.extend({
   context: async ({ browser, viewport, isMobile, hasTouch, deviceScaleFactor }, use, testInfo) => {
@@ -16,6 +17,7 @@ const test = base.extend({
     const context = await readOnlyContext(browser, { storageState: state, viewport, isMobile, hasTouch, deviceScaleFactor, locale: 'ru-RU' });
     try { await use(context); }
     finally {
+      await buildEvidence(context.pages()[0],testInfo);
       await failureScreenshot(context, testInfo);
       await context.close();
     }
@@ -37,12 +39,18 @@ async function openBonuses(page) {
   expect(validBonuses(facts.bonuses), 'RF enabled program, nonempty promo and numeric friend discount are prerequisites').toBe(true);
   return facts.bonuses;
 }
+async function activate(page, locator) {
+  if (await page.evaluate(()=>navigator.maxTouchPoints>0)) await locator.tap();
+  else await locator.click();
+}
 async function referralTab(page) {
   const tab = page.getByRole('tab', { name: 'Реферальная программа', exact: true });
-  await tab.click();
+  await activate(page,tab);
   await expect(tab).toHaveAttribute('aria-selected','true');
   await expect(page.getByText('Ваш реферальный промокод', { exact:true })).toBeVisible();
 }
+for (const [width,height,profile] of [[1440,900,'desktop'],[320,693,'mobile-320'],[360,780,'mobile-360'],[375,812,'mobile-375'],[390,844,'mobile-390']]) test.describe(`RF-core ${profile}`,()=> {
+  test.use({viewport:{width,height},isMobile:profile!=='desktop',hasTouch:profile!=='desktop',deviceScaleFactor:profile==='desktop'?1:3});
 test('RF-1 core: referral link controls are absent from the student UI', async ({ page }) => {
   await openBonuses(page); await referralTab(page);
   await expect(page.getByTitle('Скопировать ссылку', { exact:true })).toHaveCount(0);
@@ -58,7 +66,7 @@ test('RF-2 tabs/promo: real switching preserves a visible nonempty server promo'
   });
   expect(shown, 'RF-2 promo is visible; do not log its value').toBe(true);
   const balance=page.getByRole('tab',{name:'Баланс',exact:true});
-  await balance.click(); await expect(balance).toHaveAttribute('aria-selected','true');
+  await activate(page,balance); await expect(balance).toHaveAttribute('aria-selected','true');
   await referralTab(page);
 });
 test('RF-3 friend discount matches an approved expectation and the server referral value', async ({ page }) => {
@@ -71,20 +79,25 @@ test('RF-3 friend discount matches an approved expectation and the server referr
   await expect(sentence).toBeVisible();
   expect(displayedDiscount(await sentence.innerText()),'RF-3 displayed friend discount').toBe(expected);
 });
-test('RF-4 core admin: removed referral_link field is absent', async ({ browser }, testInfo) => {
+});
+for (const [width,height,profile] of [[1440,900,'desktop'],[320,693,'mobile-320'],[360,780,'mobile-360'],[375,812,'mobile-375'],[390,844,'mobile-390']]) test.describe(`RF-admin ${profile}`,()=> {
+  test.use({viewport:{width,height},isMobile:profile!=='desktop',hasTouch:profile!=='desktop',deviceScaleFactor:profile==='desktop'?1:3});
+test('RF-4 core admin: removed referral_link field is absent', async ({ browser, viewport, isMobile, hasTouch, deviceScaleFactor }, testInfo) => {
   const state=config.sessions.referralAdmin.state;
   test.skip(!state,'BLOCKED coverage: no read-only admin fixture');
   const id=Number(config.sessions.referralAdmin.expectedId);
   if (!Number.isSafeInteger(id) || id<=0) throw new Error('BLOCKED: agreed admin identity required');
-  const context=await readOnlyContext(browser,{storageState:state});
+  const context=await readOnlyContext(browser,{storageState:state,viewport,isMobile,hasTouch,deviceScaleFactor,locale:'ru-RU'});
   try {
     const page=await context.newPage(); const response=await page.goto(BASE+'/admin/settings');
+    await buildEvidence(page,testInfo,'admin-web-build');
     expect(response.status()).toBe(200);
     const scoped=await page.evaluate(id=>window.isPlatforma===true && JSON.parse(document.getElementById('app').dataset.page).props.auth?.user?.id===id,id);
     expect(scoped,'RF-4 agreed core admin session').toBe(true);
     await expect(page.locator('#referral_link')).toHaveCount(0);
     await expect(page.getByLabel('Реферальная ссылка',{exact:true})).toHaveCount(0);
   } finally { await failureScreenshot(context,testInfo); await context.close(); }
+});
 });
 for (const [width,height] of [[320,693],[360,780],[375,812],[390,844]]) test.describe(`RF-mobile ${width}`,()=> {
   test.use({viewport:{width,height},isMobile:true,hasTouch:true,deviceScaleFactor:3});

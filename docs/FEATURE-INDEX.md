@@ -4,8 +4,8 @@
 
 | Область | Реализовано | Что ещё нужно |
 |---|---|---|
-| Live | 11 тестов, см. features/live-rooms.md | Live integration/playback/cleanup этой ревизии |
-| Referral core | 8 тестов, см. features/referral.md | Live integration, бренды, realdevices, checkout/payout/clipboard |
+| Live | 14 тестов, см. features/live-rooms.md | Live integration/playback/cleanup этой ревизии |
+| Referral core | 24 теста, см. features/referral.md | Live integration, бренды, realdevices, checkout/payout/clipboard |
 | Базовый auth | Только setup live roles, проверка идентичности referral | Отдельный approved-contract positive/negative auth с безопасной fixture; актуальность старого login wait/OTP расследуется |
 | Registration | Нет, только план | Подтверждённый тестовый mail/OTP и безопасные новые данные, источник требований |
 | Product/course | Нет, только план | Роли/тип продукта/свой QA объект/создание и серверная очистка |
@@ -18,3 +18,5 @@ Smoke — ограниченная подборка уже реализован�
 ## Текущий охват09.10.2026
 
 Машиночитаемый профиль: qa-scope.json. Ядро Platformax сохраняется; приоритетные бренды — Kinezio, Kochfit, Medvediva, Popovichfit. Их разрешённые среды и роли проверяются раздельно. Автоматические feature suites сейчас реализованы для ядра; brand automation не реализована и обход брендов не запускается. Бренды вне этого профиля не являются обязательными пробелами текущего отчёта; общая расширяемость сохраняется.
+
+Последнее решение о текущем охвате заменяет прежний акцент на брендах: главный продукт Platformax по семи платформенным строкам [PLATFORM-COVERAGE](PLATFORM-COVERAGE.md). Бренды дополнительны и неблокирующие, отдельные admin logins не требуются. Native automation пока отсутствует.

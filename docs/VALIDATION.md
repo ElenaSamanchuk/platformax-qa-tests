@@ -24,3 +24,7 @@
 Общий MVP-smoke discovery:6 сценариев (S-1/H-1/Вход + RF-1/2/3), команда из package.json проверена на точной выборке. Smoke integrationNOT RUN. Общие configuration/role-session mapping/API fixture/QA title builder добавлены без объявления базового auth реализованным.
 
 Изменение профиля охвата09.10: qa-scope.json включает только ядро +Kinezio/Kochfit/Medvediva/Popovichfit. JSON и config syntax проверены; это конфигурация/документация, не реализованный brand integration runner. Исторические продуктовые отчёты не изменялись.
+
+## Актуальный основной охват Platformax ·09.10.2026
+
+Discovery38=14live+24referral; smoke6 после параметризации. Syntax всех изменённых JS и JSON scopePASS, unit9/9. Новые device mode cases интеграционно НЕ запускались. Native Android/iOS/newAdminiOS автоматизация не реализована; центральная матрица PLATFORM-COVERAGE описывает фактическую применимость без фиктивного N/A. Новая live-запись разрешена в включённом объёме, но кооперативная очередь/fixtures остаются обязательны. HTML renderblocker координатором снят; это доступность метода, не выполненная визуальная приёмка данного HTML.

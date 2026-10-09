@@ -11,7 +11,7 @@
     "test:list": "playwright test --list",
     "test:live": "playwright test tests/live-rooms.spec.js",
     "test:referral": "playwright test tests/referral.spec.js",
-    "test:smoke": "playwright test -g \"S-1 окружение|H-1 старая|Вход:|RF-[123] \""
+    "test:smoke": "playwright test -g \"S-1 окружение|H-1 старая|Вход:|RF-core desktop.*RF-[123] \""
   },
   "devDependencies": {
     "@playwright/test": "1.63.0"
