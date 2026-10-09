@@ -1,0 +1,28 @@
+{
+  "updated": "2026-10-09",
+  "primaryProduct": "Platformax",
+  "primaryPlatforms": [
+    "admin-web-desktop",
+    "admin-web-mobile",
+    "student-web-desktop",
+    "student-web-mobile",
+    "student-app-android",
+    "student-app-ios",
+    "new-admin-app-ios"
+  ],
+  "supplementalBrands": [
+    "Kinezio",
+    "Kochfit",
+    "Medvediva",
+    "Popovichfit"
+  ],
+  "supplementalBlocking": false,
+  "brandAdminLoginRequired": false,
+  "automatedSuites": [
+    "live-rooms",
+    "referral-core"
+  ],
+  "nativeAutomationImplemented": false,
+  "brandAutomationImplemented": false,
+  "runPolicy": "Separate approved sessions/resources; supplemental brand access never blocks primary completion"
+}
