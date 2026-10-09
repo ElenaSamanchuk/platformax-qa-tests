@@ -1,0 +1,16 @@
+{
+  "name": "live-rooms-autotest",
+  "private": true,
+  "description": "Автотесты задачи «Live-комнаты» PlatformaX (тестовый стенд)",
+  "scripts": {
+    "setup": "npm install && npx playwright install chromium",
+    "test": "playwright test",
+    "test:headed": "HEADED=1 playwright test",
+    "report": "playwright show-report report",
+    "test:unit": "node --test unit/*.test.js",
+    "test:list": "playwright test --list"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

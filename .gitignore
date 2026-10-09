@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.*
+!.env.example
+report/
+test-results/
+*storage*state*.json
+.web-state*
+created-rooms.json
+cleanup-result.json
+*.lock/
+created-rooms-*.json
+cleanup-result-*.json
