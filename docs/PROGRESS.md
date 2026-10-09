@@ -7,3 +7,5 @@
 ## Общий набор + referral09.10
 
 Единый framework: общий origin/lock, read-only context/failurePNG, feature contracts. Добавлены RF-1..5:8 сценариев, отдельные команды live/referral и общий feature smoke. Unit9/9; discovery19; syntaxPASS. IntegrationNOT RUN. Следующий шаг: согласованный fixture slot +source discount → selective feature launch → actual proof → update human report; базовые auth/registration/product/course/tariff только план.
+
+Текущий профиль уточнён09.10: ядро и четыре приоритетных бренда в qa-scope.json; автоматический brand traversal отсутствует. Продуктовые посещения этой ревизией не выполнялись.

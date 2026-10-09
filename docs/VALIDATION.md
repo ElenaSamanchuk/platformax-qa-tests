@@ -22,3 +22,5 @@
 - Publication validation: code/technical MD/placeholders only; no credentials, actual user IDs, storageState, product reports/bundles/screenshots or private chat history. Integration артефакты всегда локальные и требуют privacy review.
 
 Общий MVP-smoke discovery:6 сценариев (S-1/H-1/Вход + RF-1/2/3), команда из package.json проверена на точной выборке. Smoke integrationNOT RUN. Общие configuration/role-session mapping/API fixture/QA title builder добавлены без объявления базового auth реализованным.
+
+Изменение профиля охвата09.10: qa-scope.json включает только ядро +Kinezio/Kochfit/Medvediva/Popovichfit. JSON и config syntax проверены; это конфигурация/документация, не реализованный brand integration runner. Исторические продуктовые отчёты не изменялись.

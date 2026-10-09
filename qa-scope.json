@@ -1,0 +1,16 @@
+{
+  "updated": "2026-10-09",
+  "core": "Platformax",
+  "priorityBrands": [
+    "Kinezio",
+    "Kochfit",
+    "Medvediva",
+    "Popovichfit"
+  ],
+  "automatedSuites": [
+    "live-rooms",
+    "referral-core"
+  ],
+  "brandAutomationImplemented": false,
+  "brandRunPolicy": "Separate approved environments and role fixtures; no automatic brand traversal"
+}
