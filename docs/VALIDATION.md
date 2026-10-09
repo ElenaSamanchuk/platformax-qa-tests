@@ -33,3 +33,11 @@ Discovery38=14live+24referral; smoke6 после параметризации. S
 
 В сохранённом UI подтверждена подпись «Баланс и история»: исправлен слишком узкий локатор «Баланс». Навигация RF1/RF3 допускает настоящий tab/button по имени; RF2 по-прежнему отдельно требует tab/tablist/aria-selected, ожидание доступности не ослаблено. RF5 использует соседнюю кнопку «Применить к покупке» как реальный контрольный tap с возвратом /bonuses, без заполнения checkout и submit; тест вывода больше не зависит от табовой ARIA.
 Текущий независимый QA сообщает регресс табов/ARIA/пояснения скидки на новой сборке. Это продуктовые результаты другого QA-чата, не integrationFAIL public suite. M5 также не закрыт по его current recording/playback evidence. На основании этих регрессов assertions не переводятся в ожидаемый PASS. Собственный новый интеграционный запуск не выполнялся.
+
+## Модуль ДЗ ·09.10.2026 19:13 Minsk
+
+Read-only аудит kinezio-hw-qa и текущих независимых ДЗ-отчётов завершён. Переиспользованы live Inertia props и смысл start/submit/results; fixed IDs/host, auto review publication, brand CSS/force clicks не переносились. Добавлено12 web сценариев: compound block/info/no implicit attempt/H17/owned lifecycle runner на desktop+375+390. HW-3 не готов к integration без локального проверенного provision/cleanup adapter: безопасный переносимый API создания embedded lesson fixture по источникам не установлен. Чужие/архивированные fixtures не использовать.
+
+Локальные проверки: unit12/12PASS, discovery50=14live+24referral+12HW, syntax/diff PASS. IntegrationNOT RUN, телефоны/стенд не изменялись. H17 требует отдельной historical fixture (earlier reviewed +latest on_review), HW1/2 fresh untimed. Нет adapter/manifest =BLOCKED/SKIPPED coverage, не PASS. M18/unlinked-only остаются неизвестным контрактом; M-CX01 требует native background/resume и не закрыт Playwright. Новые зависимости/платные сервисы не добавлены.
+
+Следующий шаг: подтвердить данные/селекторы своей compound fixture, реализовать и отдельно проверить локальный provision/cleanup adapter с журналом до mutations и server verify; согласовать слот, selective integration; сохранить фактический результат и cleanup. Продуктовый HTML не задерживать ради этого шага.

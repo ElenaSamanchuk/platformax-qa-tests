@@ -37,3 +37,7 @@ npm run test:list
 M-5 теперь требует три разные ready/playable записи; это серверный признак готовности, **не доказательство воспроизведения видео**. Реальный play, рост currentTime, звук и видимость содержимого проверяются отдельно. После смены API сверить контракт из docs/REQUIREMENTS.md.
 
 Начать с [RULES.md](RULES.md), [требований](docs/REQUIREMENTS.md), [плана](docs/WORKFLOW.md), [валидации](docs/VALIDATION.md). Человеческий отчёт ревизии передаётся отдельно от публичного кода. Интеграционный набор в этой ревизии не запускался.
+
+## Домашние задания
+
+`npm run test:homework`: [инструкции и границы покрытия](docs/features/homework.md). 12 зарегистрированных web сценариев: compound block/info/no implicit attempt, H17, isolated lifecycle runner. Integration NOT RUN; lifecycle требует локального проверенного provision/cleanup adapter, которого пока нет. Native background timer и неопределённые M18/unlinked-only ожидания не заменяются web assertions.

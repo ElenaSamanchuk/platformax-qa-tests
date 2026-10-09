@@ -6,8 +6,8 @@
 |---|---|---|---|
 | Веб-админка desktop: владелец, view-only сотрудник | Live lifecycle/access/staff; referral field absence | NOT RUN integration | Playwright1.63.0; web assets фиксируются при запуске, backend отдельно |
 | Веб-админка mobile: core admin | Referral field absence320/360/375/390 | NOT RUN integration; live admin form mobile пока не автоматизирован | touch/DPR3; не выдавать desktop за mobile |
-| Веб-ЛК desktop: студент/владелец | Referral tabs/promo/discount; live student join/access/presence | NOT RUN integration | Ученик без/с продуктом — отдельные fixtures, host не заменяет student |
-| Веб-ЛК mobile: referral fixture/host live | Referral RF1..5 на320–390; live host lobby375/390/landscape844 | NOT RUN integration; student live mobile не автоматизирован | Device mode != физический телефон/native |
+| Веб-ЛК desktop: студент/владелец | Referral tabs/promo/discount; live student join/access/presence; homework compound/info/H17/lifecycle runner | NOT RUN integration | Ученик без/с продуктом — отдельные fixtures, host не заменяет student |
+| Веб-ЛК mobile: referral fixture/host live | Referral RF1..5 на320–390; live host lobby375/390/landscape844; homework375/390 | NOT RUN integration; student live mobile не автоматизирован | Device mode != физический телефон/native |
 | ЛК Android | Нет native suite | Не проверено этим набором; наличие функции не установлено | Требуется подтвердить актуальную установленную сборку и путь меню/поиск/роль |
 | ЛК iOS | Нет native suite | Не проверено этим набором; наличие функции не установлено | То же; прежняя версия из передачи не сегодняшнее доказательство |
 | Новая админка iOS | Нет native suite | Не проверено этим набором; список/создание требуют реального прогона | Подтвердить активный bundle/версию после relaunch и маршрут ошибки |
@@ -17,3 +17,5 @@ N/A допустимо только после подтверждения нед
 Запись в тестовой live-админке разрешена в включённом объёме текущей задачи. Дополнительных расходов эта ревизия не создаёт. Стоимостной блокер для согласованного M-5 снят; остаются очередь общей учётки/своих данных и реальная совместимость окружения. Чужую активную комнату или сессию не перехватывать.
 
 Отчёт для каждой ячейки: текущая сборка/дата/роль → наличие и объём осмотра → фактический PASS/FAIL/BLOCKED/SKIPPED/N/A с причиной → доказательство/метод → восстановление → остаточный риск. Проверки другого QA-чата указывать отдельным авторством, не считать запуском public suite. HTML rendering coordinator-approved доступен: сам файл после изменения нужно принять1280/390 обе темы,320overflow, PNG/lightbox/download. Старый blocker не переносить автоматически.
+
+Homework integration NOT RUN; lifecycle runner требует проверенного локального provisioning/cleanup adapter (не реализован здесь). Admin HW, themes и все native HW не автоматизированы. Product/tariff предпосылки привязаны к собственной fixture; полный регресс типов ДЗ/тарифов отсутствует.

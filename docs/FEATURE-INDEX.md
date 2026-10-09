@@ -6,6 +6,7 @@
 |---|---|---|
 | Live | 14 тестов, см. features/live-rooms.md | Live integration/playback/cleanup этой ревизии |
 | Referral core | 24 теста, см. features/referral.md | Live integration, бренды, realdevices, checkout/payout/clipboard |
+| Homework core | 12 сценариев (3 read-only + lifecycle runner × 3 профиля), см. [homework](features/homework.md) | Live fixtures/verified provisioning adapter, integration, native, admin, rework/attachments/deadlines |
 | Базовый auth | Только setup live roles, проверка идентичности referral | Отдельный approved-contract positive/negative auth с безопасной fixture; актуальность старого login wait/OTP расследуется |
 | Registration | Нет, только план | Подтверждённый тестовый mail/OTP и безопасные новые данные, источник требований |
 | Product/course | Нет, только план | Роли/тип продукта/свой QA объект/создание и серверная очистка |

@@ -11,3 +11,6 @@ cleanup-result.json
 *.lock/
 created-rooms-*.json
 cleanup-result-*.json
+
+homework-fixture*.json
+homework-adapter*.cjs
