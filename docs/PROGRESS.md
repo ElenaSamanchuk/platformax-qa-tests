@@ -13,3 +13,5 @@
 ## Platformax-first ·09.10.2026
 
 Профиль актуализирован: основной Platformax admin/LKdesktop/mobile +studentAndroid/iOS +newAdminiOS. Бренды — supplemental/nonblocking. Автоматизация расширена:14live (11desktop +3hostmobile-lobby),24referral (15coretabs/promo/discount +5adminfield +4withdrawal touch). Новый общий слой filtered build evidence, без полных props/secrets. Discovery38, smoke6; unit9/9 и syntaxPASS. IntegrationNOT RUN: liveQA использует общую учётку/свою активную запись; не перехватывать. Native suites отсутствуют, N/A по одному экрану запрещён. Стоимость записи согласована в текущей задаче, прежний costblocker снят; HTMLblocker снят координатором, visual validation остаётся отдельным фактическим шагом.
+
+Финальная сверка первой сдачи09.10: исправлен локатор Balance label и зависимость withdrawal control от tabARIA; требованияRF2/RF3 сохранены. Новый релизный регресс другого QA-чата отделён от собственной syntax/unit/discovery валидации. Scope index очищен от прежнего основного брендового акцента. IntegrationNOT RUN; first handoff не ждёт фиксов продукта.

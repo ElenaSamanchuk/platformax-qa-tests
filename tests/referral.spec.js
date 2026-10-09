@@ -43,16 +43,17 @@ async function activate(page, locator) {
   if (await page.evaluate(()=>navigator.maxTouchPoints>0)) await locator.tap();
   else await locator.click();
 }
-async function referralTab(page) {
+async function referralTab(page, requireSemantics = true) {
   const tab = page.getByRole('tab', { name: 'Реферальная программа', exact: true });
-  await activate(page,tab);
-  await expect(tab).toHaveAttribute('aria-selected','true');
+  const button = page.getByRole('button', { name: 'Реферальная программа', exact: true });
+  await activate(page,tab.or(button));
+  if (requireSemantics) await expect(tab).toHaveAttribute('aria-selected','true');
   await expect(page.getByText('Ваш реферальный промокод', { exact:true })).toBeVisible();
 }
 for (const [width,height,profile] of [[1440,900,'desktop'],[320,693,'mobile-320'],[360,780,'mobile-360'],[375,812,'mobile-375'],[390,844,'mobile-390']]) test.describe(`RF-core ${profile}`,()=> {
   test.use({viewport:{width,height},isMobile:profile!=='desktop',hasTouch:profile!=='desktop',deviceScaleFactor:profile==='desktop'?1:3});
 test('RF-1 core: referral link controls are absent from the student UI', async ({ page }) => {
-  await openBonuses(page); await referralTab(page);
+  await openBonuses(page); await referralTab(page,false);
   await expect(page.getByTitle('Скопировать ссылку', { exact:true })).toHaveCount(0);
   await expect(page.getByRole('button', { name:'Поделиться ссылкой',exact:true })).toHaveCount(0);
 });
@@ -65,7 +66,7 @@ test('RF-2 tabs/promo: real switching preserves a visible nonempty server promo'
     return [...document.querySelectorAll('main *')].some(e => e.childElementCount === 0 && e.textContent.trim() === code && e.getBoundingClientRect().width > 0 && e.getBoundingClientRect().height > 0);
   });
   expect(shown, 'RF-2 promo is visible; do not log its value').toBe(true);
-  const balance=page.getByRole('tab',{name:'Баланс',exact:true});
+  const balance=page.getByRole('tab',{name:/^Баланс(?: и история)?$/});
   await activate(page,balance); await expect(balance).toHaveAttribute('aria-selected','true');
   await referralTab(page);
 });
@@ -73,7 +74,7 @@ test('RF-3 friend discount matches an approved expectation and the server referr
   const expected=discount(process.env.REFERRAL_EXPECTED_DISCOUNT);
   test.skip(expected === 0, 'BLOCKED coverage: zero discount display is not an approved requirement');
   if (!process.env.REFERRAL_DISCOUNT_SOURCE?.trim()) throw new Error('BLOCKED: name the source/date of the approved friend discount');
-  const bonuses=await openBonuses(page); await referralTab(page);
+  const bonuses=await openBonuses(page); await referralTab(page,false);
   expect(bonuses.referral.friendDiscountPercent,'RF-3 server friend discount, not cashback').toBe(expected);
   const sentence=page.getByText(/Друг вводит промокод при оплате и получает скидку/);
   await expect(sentence).toBeVisible();
@@ -104,11 +105,11 @@ for (const [width,height] of [[320,693],[360,780],[375,812],[390,844]]) test.des
   test('RF-5 withdrawal: center touch opens the form without submitting',async({page},testInfo)=> {
     const bonuses=await openBonuses(page);
     test.skip(bonuses.canWithdraw !== true || bonuses.hasPendingWithdrawals !== false,'BLOCKED coverage: choose fixture with eligible withdrawal and no pending request');
-    // Control touch establishes that navigation/touch is functioning.
-    const referral=page.getByRole('tab',{name:'Реферальная программа',exact:true});
-    await referral.tap(); await expect(referral).toHaveAttribute('aria-selected','true');
-    const balance=page.getByRole('tab',{name:'Баланс',exact:true});
-    await balance.tap(); await expect(balance).toHaveAttribute('aria-selected','true');
+    // A separate safe control avoids making the withdrawal test depend on tab ARIA.
+    const apply=page.getByRole('button',{name:'Применить к покупке',exact:true});
+    await apply.tap();
+    await page.waitForURL(url=>url.origin===BASE && url.pathname!=='/bonuses');
+    await openBonuses(page); // no checkout fields or payments are touched
     const button=page.getByRole('button',{name:'Вывести средства',exact:true});
     await expect(button).toBeEnabled(); await button.scrollIntoViewIfNeeded();
     const hits=await button.evaluate(el=> {
