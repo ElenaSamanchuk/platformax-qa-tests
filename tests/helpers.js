@@ -3,22 +3,19 @@
 const fs = require('fs');
 const { expect } = require('@playwright/test');
 
-const { validateBase } = require('../lib/contracts');
-const BASE = validateBase(process.env.BASE_URL);
+const { configuration } = require('../lib/configuration');
+const config = configuration();
+const BASE = config.baseURL;
+const { api } = require('./fixtures/api');
 const MEDIA_ARGS = { permissions: ['camera', 'microphone'], locale: 'ru-RU', viewport: { width: 1440, height: 900 } };
 
-const ROLES = {
-  owner: { email: process.env.OWNER_EMAIL, password: process.env.OWNER_PASSWORD },
-  studentA: { email: process.env.STUDENT_A_EMAIL, password: process.env.STUDENT_A_PASSWORD }, // БЕЗ продукта PRODUCT_ID
-  studentB: { email: process.env.STUDENT_B_EMAIL, password: process.env.STUDENT_B_PASSWORD }, // С продуктом PRODUCT_ID
-  staffView: { email: process.env.STAFF_VIEW_EMAIL, password: process.env.STAFF_VIEW_PASSWORD }, // сотрудник «только просмотр»
-};
+const ROLES = config.roles;
 
 /** Новый изолированный браузерный контекст под ролью. Возвращает { ctx, page }. */
 async function as(browser, role) {
   const r = ROLES[role];
   if (!r || !r.email) throw new Error(`В .env не задана почта для роли ${role}`);
-  const ownerState = process.env.OWNER_STORAGE_STATE;
+  const ownerState = config.sessions.owner;
   if (!r.password && ownerState && fs.existsSync(ownerState)) return impersonate(browser, ownerState, r.email, role);
   if (!r.password) throw new Error(`В .env нет пароля для роли ${role} (или задайте OWNER_STORAGE_STATE для «Войти как»)`);
   const ctx = await browser.newContext(MEDIA_ARGS);
@@ -62,14 +59,6 @@ async function whoami(page) {
 }
 
 /** Запрос от имени пользователя страницы (кука сессии + XSRF). */
-async function api(page, method, url, body) {
-  return page.evaluate(async ([m, u, b]) => {
-    const x = decodeURIComponent((document.cookie.match(/XSRF-TOKEN=([^;]+)/) || [])[1] || '');
-    const r = await fetch(u, { method: m, headers: { 'X-XSRF-TOKEN': x, 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json', 'Content-Type': 'application/json' }, body: b ? JSON.stringify(b) : undefined });
-    let data = await r.text(); try { data = JSON.parse(data); } catch (e) { /* html */ }
-    return { status: r.status, data };
-  }, [method, url, body]);
-}
 
 const state = async (ownerPage, id) => {
   const r = await api(ownerPage, 'GET', `/admin/live-rooms/${id}/state`);
@@ -96,6 +85,7 @@ const inside = async (ownerPage, id) => {
 
 /** Создать комнату QA-… (как форма «Новая встреча»). Возвращает id. */
 async function createRoom(ownerPage, title, extra = {}) {
+  expect(title.startsWith('QA-AT '), 'only own QA-AT data is permitted').toBe(true);
   await ownerPage.goto(BASE + '/admin/live-rooms');
   const id = await ownerPage.evaluate(async ([title, extra]) => {
     const x = decodeURIComponent(document.cookie.match(/XSRF-TOKEN=([^;]+)/)[1]);

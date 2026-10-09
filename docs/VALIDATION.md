@@ -12,3 +12,13 @@
 Проверить на компьютере коллеги: npm ci, unit, list на pinned версии; затем dedicated test slot + preflight роли/сборка/стоимость, smoke, regression, cleanup и human report. Trace/video могут содержать персональные данные, публично не публиковать автоматически.
 
 Финальный manifest/lock: Playwright 1.63.0; npm audit metadata 0 vulnerabilities (не гарантия отсутствия рисков). Новые npm runtime пакеты и браузеры не устанавливались. Advisory: https://github.com/advisories/GHSA-7mvr-c777-76hp.
+
+## Дополнение общего набора / referral ·09.10.2026
+
+- Итоговая локальная проверка: 9/9 unit (контракты записей/discount/prerequisites/lock), node --check PASS. Discovery:19 =11 live +8 referral на Playwright1.63.0. Ни один integration сценарий этой ревизии не запускался.
+- Условия referral восстановлены по независимому QA PROGRESS09.10 и сохранённому UI-контракту. Эти источники использованы для assertions, не выданы за собственный запуск нового набора. Friend discount отделён от cashback/perInviteBonus; значение/источник задаются человеком. Нулевой процент — BLOCKED contract.
+- Мобильный RF-5: только device mode320/360/375/390, touch/DPR3, center tap/control tap/5hitpoints; native и landscape не реализованы. No withdrawal submit; read-only fixture blocks non-GET/HEAD/OPTIONS.
+- Общий smoke — выборка реализованных feature tests. Базовые auth/registration/product/course/tariff отдельными тестами НЕ реализованы; в FEATURE-INDEX только план.
+- Publication validation: code/technical MD/placeholders only; no credentials, actual user IDs, storageState, product reports/bundles/screenshots or private chat history. Integration артефакты всегда локальные и требуют privacy review.
+
+Общий MVP-smoke discovery:6 сценариев (S-1/H-1/Вход + RF-1/2/3), команда из package.json проверена на точной выборке. Smoke integrationNOT RUN. Общие configuration/role-session mapping/API fixture/QA title builder добавлены без объявления базового auth реализованным.

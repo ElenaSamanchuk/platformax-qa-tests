@@ -5,21 +5,18 @@ const { test, expect } = require('@playwright/test');
 const h = require('./helpers');
 const fs = require('fs');
 const { recordingsReady, restoreRooms } = require('../lib/contracts');
-let dataLock, lockHeld = false;
+const coordination = require('../lib/coordination');
+const { qaTitle } = require('../lib/qa-data');
+let dataLock;
 
 
 let owner, A, B; // { ctx, page }: владелец-ведущий, ученик без продукта, ученик с продуктом
 const rooms = [];
-const newRoom = async (name, extra) => { const id = await h.createRoom(owner.page, `QA-AT ${name} ${h.stamp()}`, extra); rooms.push(id); fs.writeFileSync(`created-rooms-${process.pid}.json`, JSON.stringify(rooms)); return id; };
+const newRoom = async (name, extra) => { const id = await h.createRoom(owner.page, qaTitle(name), extra); rooms.push(id); fs.writeFileSync(`created-rooms-${process.pid}.json`, JSON.stringify(rooms)); return id; };
 const live = async (name, extra) => { const id = await newRoom(name, extra); expect((await h.publish(owner.page, id)).status).toBe(200); expect((await h.start(owner.page, id)).status).toBe(200); return id; };
 
 test.beforeAll(async ({ browser }) => {
-  if (process.env.QA_RUN_APPROVED !== '1' || !process.env.QA_DATA_LOCK_DIR)
-    throw new Error('BLOCKED: coordinate shared account/data first; set QA_RUN_APPROVED=1 and QA_DATA_LOCK_DIR');
-  dataLock = process.env.QA_DATA_LOCK_DIR;
-  fs.mkdirSync(dataLock); // existing lock fails closed; never remove someone else's lock
-  lockHeld = true;
-  fs.writeFileSync(dataLock + '/owner.json', JSON.stringify({ run: new Date().toISOString(), pid: process.pid }));
+  dataLock = coordination.acquire(process.env, 'live-rooms');
   owner = await h.as(browser, 'owner');
   A = await h.as(browser, 'studentA');
   B = await h.as(browser, 'studentB');
@@ -32,12 +29,12 @@ test.afterAll(async () => {
       unpublish: id => h.unpublish(owner.page, id),
       read: id => h.roomDetails(owner.page, id),
     });
-    if (lockHeld) fs.writeFileSync(`cleanup-result-${process.pid}.json`, JSON.stringify({ rooms, failures }, null, 2));
+    if (dataLock) fs.writeFileSync(`cleanup-result-${process.pid}.json`, JSON.stringify({ rooms, failures }, null, 2));
   } finally {
     for (const r of [owner, A, B]) if (r) await r.ctx.close();
   }
   if (failures.length) throw new Error('CLEANUP FAILED: see cleanup-result-<pid>.json; keep data lock and restore these QA ids manually');
-  if (lockHeld) { fs.unlinkSync(dataLock + '/owner.json'); fs.rmdirSync(dataLock); }
+  coordination.release(dataLock);
 });
 
 test('S-1 окружение: вход выдаёт JWT и wss-адрес медиасервера (не localhost)', async () => {
