@@ -1,6 +1,6 @@
 # Домашние задания: запуск для коллег
 
-Модуль `tests/homework.spec.js`, команда `npm run test:homework`. Platforma core: ЛК desktop 1440×900 и mobile web 375×812/390×844, touch/isMobile/DPR3. 12 зарегистрированных сценариев (4 × 3); **integration NOT RUN**, отсутствуют согласованные собственные fixtures и адаптер подготовки/очистки составного урока. Регистрация теста не означает работоспособность локаторов на текущей сборке или PASS продукта.
+Модуль `tests/homework.spec.js`, команда `npm run test:homework`. Platforma core: ЛК desktop 1440×900 и mobile web 375×812/390×844, touch/isMobile/DPR3. 15 зарегистрированных сценариев (12 исходных + 3 opt-in HW-4 runner); **integration NOT RUN**, отсутствуют согласованные собственные fixtures и адаптер подготовки/очистки составного урока. Регистрация теста не означает работоспособность локаторов на текущей сборке или PASS продукта.
 
 ## Контракт и аудит переноса
 
@@ -13,7 +13,7 @@
 | H17 | Через строку истории открывается более ранняя проверенная попытка, включая её ID на сервере и видимый результат, при новой попытке на проверке | Отдельная owned historical fixture |
 | HW-3 цепочка | Явный старт → одна in_progress → выбор → подтверждение сдачи → reviewed/result той же попытки → возврат и обновлённый статус блока; новая попытка не возникает | Отдельная новая fixture на каждый профиль, 1 вопрос single-choice, after_submit, без ручной проверки/таймера |
 
-**Не зафиксированы как требования:** доступность задания, прикреплённого только внутри урока без связи с главой; M18 счётчик доработок. Веб не считается эталоном номера попытки. M-CX01 Android «фон → 00:00 → редактируемая форма» требует отдельного native прогона с реальным background/resume и проверкой сервера. Этот web модуль его не закрывает. Файлы, изображения, дедлайны, admin review, rework и native приложения здесь не автоматизированы.
+**Не зафиксированы как требования:** доступность задания, прикреплённого только внутри урока без связи с главой; M18 счётчик доработок. Веб не считается эталоном номера попытки. M-CX01 Android «фон → 00:00 → редактируемая форма» требует отдельного native прогона с реальным background/resume и проверкой сервера. Этот web модуль его не закрывает. Для файлов/admin review/rework теперь есть opt-in HW-4 runner с отдельным adapter, описанный ниже; готового adapter и integration результата нет. Изображения, дедлайны и native приложения этим модулем не автоматизированы.
 
 ## Подготовка и команды
 
@@ -53,3 +53,97 @@ Cleanup исполняется в finally, включая неудачный pro
 ## Результат в отчёте
 
 Указывать repo + точный commit + ссылку на этот файл, источник контракта, web assets/Inertia component/version, роль, профиль, PASS/FAIL/BLOCKED/SKIPPED, фактические PNG/серверную сверку и cleanup. Данные сборки фильтруются, полные props не сохраняются. Нативные проверки, новые admin iOS и supplemental темы/бренды имеют отдельный статус. Красный locator/schema/config не автоматически баг продукта; сначала классификация первого сбоя и независимый повтор.
+
+## HW-4: opt-in manual PDF → доработка → публикация
+
+`tests/homework-manual.spec.js`: три **web runner** сценария (desktop, 375/390
+с touch/DPR3). Это assertions поверх проверенного локального адаптера. Готового
+адаптера в репозитории нет, integration **NOT RUN**. Native наблюдения ручного
+ответа/PDF и возврата на доработку от 12.10 определили границы сценария, но не
+являются PASS этого runner. WDA/adb, таймеры и все виды ДЗ здесь не реализованы.
+
+```sh
+npm run test:unit
+BASE_URL=https://placeholder.test.nn99.ru npm run test:homework -- --list -g 'HW-4'
+# После отдельной проверки adapter и согласования слота:
+HW_MANUAL_APPROVED=1 HW_MANUAL_ADAPTER_FILE=/absolute/private/manual-adapter.cjs \
+  npm run test:homework -- -g 'HW-4 desktop'
+```
+
+Также нужны подтверждённый BASE_URL, QA_RUN_APPROVED=1 и новый абсолютный
+QA_DATA_LOCK_DIR из RULES.md. Placeholder используется только для discovery.
+Без manual approval/adapter — SKIPPED с причиной BLOCKED coverage, не PASS.
+Невалидный configured adapter останавливает тест с BLOCKED.
+
+Адаптер CommonJS экспортирует пять async операций:
+
+| Операция | Ответственность |
+|---|---|
+| `provision(options)` | Новые QA-AT объекты и контексты ученика/проверяющего; журнал IDs и baseline **до** первой mutation; вернуть fixture |
+| `act({...options,fixture,action,...input})` | Проверенные UI/API шаги: openCompound, start, attachSyntheticPDF, submit, teacherReturn, resubmit, teacherPublish |
+| `snapshot({...options,fixture,stage,probeId})` | Независимый свежий серверный read, видимые факты web UI и новый оригинальный PNG текущего экрана |
+| `cleanup({...options,fixture})` | Закрыть contexts; восстановить только собственные IDs/блок по baseline guard, даже при частичном provision без fixture; чужие изменения не затирать |
+| `verifyCleanup({...options,fixture})` | Серверная сверка снятия своей привязки/архива ДЗ/исходного compound; строго true либо failure |
+
+`options`: browser, baseURL, runId, testInfo, profile (width/height/isMobile/hasTouch/DPR),
+video:'off'. Адаптер не записывает видео и не использует реальные камеры.
+`adapter.validation`: `{approved:true,source:'ссылка/дата проверки адаптера',
+capabilities:['manual-web']}` — запись ревью исполнителя, не автоматическое
+доказательство безопасности. До provisioning адаптер проверяет origin/роль и
+пишет журнал; не использует hardcoded учётки/IDs. Можно переиспользовать общие
+configuration/coordination, homework info/state/openBlock и same-origin API fixture.
+
+Fixture содержит обычные поля `fixture()` и дополнительно: runId, origin===baseURL,
+title===runId, fresh:true, reviewerId, roleSource, questionType:'text', questionsCount:1,
+fileRequired:true, resultMode:'after_review', resultText, journalPath, blockId,
+initialBlockText, completedBlockText, blockSource (подтверждённые UI подписи/статусы). Журнал:
+runId, origin, ownedIds (homeworkId/chapterHomeworkId), baseline восстановления.
+`rework:{mode:'same-attempt'|'new-attempt',source:'подтверждённый контракт'}` задаёт
+lifecycle. Номер не предполагается равным индексу и не увеличивается в assertions
+по догадке. Нет источника бизнес-логики доработки — BLOCKED.
+
+Нормализованный snapshot, только факты реальных reads:
+
+```js
+{
+  probeId, capture: `/absolute/private/stage-${probeId}.png`,
+  server: {
+    origin, studentId, reviewerId, reviewerCanReview: true,
+    homeworkId, chapterHomeworkId,
+    currentAttemptId: null, // ID только активной in_progress
+    attempts: [{id, number, status, feedback, attachments: [{id, mimeType, sha256}]}],
+    history: [{id, number, status}] // фактическая история, ID/номер соответствуют attempts
+  },
+  ui: {
+    origin, studentId, homeworkId, chapterHomeworkId, visible: true,
+    attemptId, attemptNumber, status, history: [{id, number, status}],
+    attachmentIds: [], feedback, resultText,
+    compoundBlock: {homeworkId, sourceId: blockId, visible: true, status, text}
+  }
+}
+```
+
+`ui` извлекается из видимого экрана/истории, `server` — отдельным свежим запросом,
+не из того же Vue объекта. SHA256 вычисляется по сохранённому собственному PDF
+на сервере, а не подставляется из ожидаемого hash. Capture создаётся после запроса
+probe; имя PNG содержит текущий уникальный probeId. Runner проверяет PNG header/размер
+и mtime с допуском 2 секунды для гранулярности файловой системы, затем прикрепляет к testInfo. Это
+проверка наличия доказательства, а не автоматическая визуальная оценка картинки.
+Сырые props, sessions и артефакты остаются локальными. `attachSyntheticPDF` получает
+также первоначальный синтетический текст; `resubmit` — уточнённый текст и PDF.
+При новом attempt сервер вправе клонировать файл с новым media ID: между попытками
+сравнивается SHA256, а UI/server IDs — только внутри одной попытки. Вложение старой
+попытки проверяется отдельно, без требования одинаковых IDs у двух попыток.
+
+Runner проверяет отсутствие implicit start при открытии compound; одну попытку
+после явного start; доставку synthetic PDF с тем же hash; on_review после submit;
+needs_info и точный QA комментарий после teacherReturn; resubmit по подтверждённому
+same/new-attempt контракту; сохранение старых IDs/номеров/вложений; видимый resultText
+проверенной попытки; возврат в compound без новой попытки. На первом открытии
+проверяется видимый собственный блок (homeworkId/sourceId, assigned и initialBlockText),
+на возврате — тот же блок со статусом reviewed и completedBlockText. История web сверяется
+с фактическими server IDs. Native сравнение требует отдельного адаптера/прогона:
+эти web assertions не являются готовой автоматизацией Android/iOS.
+
+Красный сначала классифицировать и повторить независимо при возможности.
+Cleanup failure сохраняет disk lock и IDs; не превращается в PASS или SKIP.
