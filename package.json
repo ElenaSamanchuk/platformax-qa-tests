@@ -3,6 +3,7 @@
   "private": true,
   "description": "Shared QA contracts, fixtures and feature regression suites",
   "scripts": {
+    "new:feature": "node scripts/new-feature.js",
     "setup": "npm install && npx playwright install chromium",
     "test": "playwright test",
     "test:headed": "HEADED=1 playwright test",
