@@ -7,6 +7,8 @@
 | Live | 14 тестов, см. features/live-rooms.md | Live integration/playback/cleanup этой ревизии |
 | Referral core | 24 теста, см. features/referral.md | Live integration, бренды, realdevices, checkout/payout/clipboard |
 | Homework core | 15 сценариев (12 прежних + 3 opt-in manual/rework runner), см. [homework](features/homework.md) | Live fixtures/verified provisioning adapter, integration, native, admin, rework/attachments/deadlines |
+| Messages | 2 Chromium mobile geometry cases; [messages](features/messages.md) | Исходный и переносимый integration 12.10 (23:02 Minsk): geometry FAIL×2, предусловия PASS; lifecycle/realtime/native отдельно |
+| Admin AI | [Контракт accuracy/latency/usage](features/admin-ai.md), suite не реализован | Verified provider/inputs/oracles/roles/usage schema + целевой integration |
 | Базовый auth | Только setup live roles, проверка идентичности referral | Отдельный approved-contract positive/negative auth с безопасной fixture; актуальность старого login wait/OTP расследуется |
 | Registration | Нет, только план | Подтверждённый тестовый mail/OTP и безопасные новые данные, источник требований |
 | Product/course | Нет, только план | Роли/тип продукта/свой QA объект/создание и серверная очистка |

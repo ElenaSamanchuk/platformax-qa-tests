@@ -10,9 +10,10 @@
 |---|---|---|---|
 | Live-комнаты | `npm run test:live` | 14 целевых сценариев | [Live](docs/features/live-rooms.md) |
 | Рефералка ядра | `npm run test:referral` | 24: core/admin desktop + mobile 320–390, withdrawal touch | [Referral](docs/features/referral.md) |
+| Messages geometry | `npm run test:messages` | 2 mobile cases; переносимый integration 12.10 23:02 FAIL×2 | [Messages](docs/features/messages.md) |
 | Общий smoke | `npm run test:smoke` | Выборка S-1/H-1/Вход и RF-1/2/3 | Обе feature инструкции; пропуски = пробел |
 | Контракты/locks | `npm run test:unit` | 20 pure/local проверок, без браузера | [Validation](docs/VALIDATION.md) |
-| Всё реализованное | `npm test` | 38 integration сценариев, не весь QA | Сначала согласованный слот/roles/env |
+| Всё реализованное | `npm test` | Все зарегистрированные suites, не весь QA | Сначала согласованный слот/roles/env |
 
 [Индекс покрытия и план базового регресса](docs/FEATURE-INDEX.md). Существующий auth внутри live role setup не объявляется отдельным базовым auth тестом. Registration/product/course/tariff пока только план миграции старых тестов после расследования контрактов.
 
@@ -40,8 +41,17 @@ npm run test:list
 
 M-5 теперь требует три разные ready/playable записи; это серверный признак готовности, **не доказательство воспроизведения видео**. Реальный play, рост currentTime, звук и видимость содержимого проверяются отдельно. После смены API сверить контракт из docs/REQUIREMENTS.md.
 
-Начать с [RULES.md](RULES.md), [требований](docs/REQUIREMENTS.md), [плана](docs/WORKFLOW.md), [валидации](docs/VALIDATION.md). Человеческий отчёт ревизии передаётся отдельно от публичного кода. Интеграционный набор в этой ревизии не запускался.
+Начать с [RULES.md](RULES.md), [требований](docs/REQUIREMENTS.md), [плана](docs/WORKFLOW.md), [валидации](docs/VALIDATION.md). Человеческий отчёт ревизии передаётся отдельно от публичного кода. Результат конкретного integration прогона указан в feature инструкции; незапущенные suites не считаются PASS.
 
 ## Домашние задания
 
 `npm run test:homework`: [инструкции и границы покрытия](docs/features/homework.md). 15 зарегистрированных web сценариев: compound block/info/no implicit attempt, H17, isolated lifecycle runner + opt-in manual PDF/rework/publish runner. Integration NOT RUN; lifecycle требует локального проверенного provision/cleanup adapter, которого пока нет. Native background timer и неопределённые M18/unlinked-only ожидания не заменяются web assertions.
+
+## Admin messages и AI
+
+[Messages](docs/features/messages.md): перенос реально выполненного M-1009-02 geometry
+regression, original run 12.10 на admin-DLlbi8EX.js выявил clipping на 320/390 (2 FAIL).
+Переносимая ревизия отдельно выполнена 12.10 в 23:02 Minsk: 2 FAIL только geometry,
+все предусловия прошли. Это актуальный дефект UI, не PASS продукта.
+[AI accuracy/latency/usage](docs/features/admin-ai.md) пока описаны как контракт для
+следующего набора: готового AI integration suite нет.
