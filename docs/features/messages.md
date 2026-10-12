@@ -62,3 +62,47 @@ Placeholder служит только discovery. Реальный BASE_URL — �
 В отчёте: repo + точный commit + ссылка на эту инструкцию, source/build/date,
 роль/profile, фактический PASS/FAIL/BLOCKED, geometry/original PNG и cleanup.
 Известный красный остаётся красным до сегодняшнего подтверждённого исправления.
+
+## H-1012-MEDIA / PDF-WEB-1012: полученный PDF
+
+`tests/messages-media.spec.js`, `npm run test:messages:media`: отдельный student
+Chromium desktop сценарий. Geometry spec не меняется. Источник — свежие собственные
+native PDF и голосовое сообщение от 12.10: сервер сохранил оба вложения, student UI
+после повторных чтений не показывал ссылку PDF/аудиоплеер. Реальный исходный PDF
+regression **1 FAIL**, `fileLinks=0`; owner/student/dialog/message и server mediaUrl
+предусловия прошли. Caption без ссылки не является доступным файлом.
+
+Переносимая PDF ревизия: integration 12.10 — **1 FAIL**, `fileLinks=0`;
+owner/student/dialog/message и mediaUrl предусловия прошли. Known defect не xfail. Voice наблюдение не
+объявлено выполненным voice автотестом: отдельного voice case пока нет; микрофон,
+генерация/скачивание/воспроизведение аудио этим spec не выполняются; browser media
+requests дополнительно блокируются.
+
+Нужны отдельные private значения: существующие approved student ID/точное имя,
+student thread session ID, ID собственного PDF сообщения, QA marker его caption.
+OWNER_STORAGE_STATE/MESSAGES_EXPECTED_OWNER_ID уже описаны выше. Источник caption
+и IDs подтверждается владельцем на собственной fixture; чужие сообщения не брать.
+Никакие реальные имена/IDs/URLs/session/screenshots в Git не переносятся.
+
+```sh
+BASE_URL=https://placeholder.test.nn99.ru npm run test:messages:media -- --list
+# После agreed slot и отдельного подтверждения собственного student fixture:
+BASE_URL="$APPROVED_TEST_ORIGIN" OWNER_STORAGE_STATE="$PRIVATE_OWNER_STATE" \
+MESSAGES_EXPECTED_OWNER_ID="$APPROVED_OWNER_ID" \
+MESSAGES_STUDENT_ID="$APPROVED_STUDENT_ID" MESSAGES_STUDENT_NAME="$PRIVATE_STUDENT_NAME" \
+MESSAGES_STUDENT_SESSION_ID="$OWN_THREAD_SESSION_ID" \
+MESSAGES_PDF_MESSAGE_ID="$OWN_PDF_MESSAGE_ID" MESSAGES_OWN_MARKER="$OWN_QA_CAPTION_MARKER" \
+QA_RUN_APPROVED=1 QA_DATA_LOCK_DIR="$NEW_ABSOLUTE_DATA_LOCK" \
+npm run test:messages:media
+```
+
+Только наблюдавшийся и разрешённый `POST /admin/users/{approvedId}/impersonate`
+временно разрешается для переключения session через настоящий UI. Exact URL/method
+allowlist снимается в finally сразу после перехода. Все остальные non-GET блокируются;
+тест не отправляет/редактирует/удаляет сообщения или медиа. Сначала verified owner,
+затем уникальная approved student row и подтверждённый фактический student principal;
+другую личность нельзя принять за холодные props. После `/messages` сверяются свой
+thread/message ID, caption marker, file type и наличие media URL. Assertions требуют
+ссылку на тот же media pathname и её видимость; ссылка не нажимается. URL/caption не
+пишутся в facts attachment, PNG остаётся private. Video/trace выключены, contexts и
+свой lock закрываются после прогона; восстановление данных не требуется.

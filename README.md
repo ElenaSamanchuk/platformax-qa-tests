@@ -11,6 +11,7 @@
 | Live-комнаты | `npm run test:live` | 14 целевых сценариев | [Live](docs/features/live-rooms.md) |
 | Рефералка ядра | `npm run test:referral` | 24: core/admin desktop + mobile 320–390, withdrawal touch | [Referral](docs/features/referral.md) |
 | Messages geometry | `npm run test:messages` | 2 mobile cases; переносимый integration 12.10 23:02 FAIL×2 | [Messages](docs/features/messages.md) |
+| Messages PDF student | `npm run test:messages:media` | 1 file-link case; исходный и переносимый 1 FAIL: ссылка отсутствует | [Messages media](docs/features/messages.md#h-1012-media--pdf-web-1012-полученный-pdf) |
 | Общий smoke | `npm run test:smoke` | Выборка S-1/H-1/Вход и RF-1/2/3 | Обе feature инструкции; пропуски = пробел |
 | Контракты/locks | `npm run test:unit` | 20 pure/local проверок, без браузера | [Validation](docs/VALIDATION.md) |
 | Всё реализованное | `npm test` | Все зарегистрированные suites, не весь QA | Сначала согласованный слот/roles/env |
