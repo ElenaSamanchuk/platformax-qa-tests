@@ -1,0 +1,14 @@
+// Case/contract/preconditions: docs/features/__FEATURE__.md
+// SKELETON: no product coverage until the scenario below is implemented and run.
+const { test } = require('@playwright/test');
+test.use({ video: 'off' });
+
+test('__FEATURE__ CASE-1: TODO confirmed user outcome', async () => {
+  // TODO confirm requirement/source, role and owned fixture; reuse an existing suite.
+  // TODO before any request: configuration() origin guard + coordination acquire.
+  // TODO use verified UI/API; meaningful visible/state assertions; build evidence.
+  // TODO readOnlyContext or approved provision + IDs journal + server cleanup check.
+  // TODO close contexts in finally; retain lock/IDs if cleanup fails.
+  // Replace this whole blocking test with the implemented case, not an empty PASS.
+  throw new Error('BLOCKED: __FEATURE__ CASE-1 is an unimplemented skeleton; see docs/features/__FEATURE__.md');
+});
