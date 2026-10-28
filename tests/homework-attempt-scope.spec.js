@@ -37,7 +37,7 @@ async function withScope(browser, testInfo, fn) {
     context = await readOnlyContext(browser,{storageState:state,viewport:{width:1440,height:900},locale:'ru-RU'});
     await context.route('**/*',route=>route.request().isNavigationRequest() && new URL(route.request().url()).origin!==base ? route.abort('blockedbyclient') : route.fallback());
     const page = await context.newPage();
-    async function read(name) {
+    async function read(name, resultAttemptId) {
       const entry=f[name], url=base+entry.path;
       const response=await page.goto(url,{waitUntil:'domcontentloaded'});
       expect(response?.status(),'authenticated information page must open').toBe(200);
@@ -63,6 +63,39 @@ async function withScope(browser, testInfo, fn) {
       const shot=testInfo.outputPath(`${name}.png`);
       await page.screenshot({path:shot,type:'png',scale:'device'});
       await testInfo.attach(name,{path:shot,contentType:'image/png'});
+      if (resultAttemptId !== undefined) {
+        expect(facts.history.some(a=>a.id===resultAttemptId && a.status==='reviewed'),
+          'result must belong to the shared reviewed history').toBe(true);
+        await expect(page.getByRole('button',{name:'Начать задание',exact:true})).toHaveCount(0);
+        await expect(page.getByRole('link',{name:'Начать задание',exact:true})).toHaveCount(0);
+        const resultLink=page.getByRole('link',{name:'Просмотреть результаты',exact:true});
+        await expect(resultLink).toBeVisible();
+        const resultURL=new URL(await resultLink.getAttribute('href'),base);
+        expect(resultURL.origin).toBe(base);
+        expect(resultURL.pathname).toBe(`/homework/${entry.placementId}/results/${resultAttemptId}`);
+        for (const [key,value] of new URL(entry.path,base).searchParams)
+          expect(resultURL.searchParams.get(key),`result preserves ${key} context`).toBe(value);
+        await resultLink.click();
+        // Inertia canonicalizes query order; context values and route must match.
+        resultURL.searchParams.sort();
+        await expect(page).toHaveURL(url=>{url.searchParams.sort();return url.href===resultURL.href;});
+        await expect(page.getByText(`Результаты: ${f.title}`,{exact:true}).first()).toBeVisible();
+        await expect(page.getByText('Детализация по вопросам',{exact:true})).toBeVisible();
+        const resultInitial=JSON.parse(await page.locator('#app').getAttribute('data-page'));
+        const resultProbe=await context.request.get(resultURL.href,{maxRedirects:0,headers:{'X-Inertia':'true','X-Inertia-Version':resultInitial.version,'X-Requested-With':'XMLHttpRequest',Accept:'text/html, application/xhtml+xml'}});
+        expect(resultProbe.status(),'shared reviewed result must be accessible through each placement').toBe(200);
+        const result=(await resultProbe.json()).props;
+        expect(result.auth?.user?.id===f.studentId,'result keeps the confirmed QA identity').toBe(true);
+        expect(result.isProduction).toBe(false);
+        expect(result.chapterHomework?.id).toBe(entry.placementId);
+        expect(result.homework?.id).toBe(entry.homeworkId);
+        expect(result.attempt?.id).toBe(resultAttemptId);
+        expect(result.attempt?.student_id===f.studentId,'result belongs to this QA student').toBe(true);
+        expect(result.attempt?.status).toBe('reviewed');
+        const resultShot=testInfo.outputPath(`${name}-result.png`);
+        await page.screenshot({path:resultShot,type:'png',scale:'device'});
+        await testInfo.attach(`${name}-result`,{path:resultShot,contentType:'image/png'});
+      }
       return facts;
     }
     await fn(read);
@@ -81,6 +114,11 @@ test('HW-scope same course: placements share used attempts and remaining limit',
   expect(await read('sameCourse'),'reading must preserve second placement').toEqual(same);
   expect.soft(same.attemptsLeft,'M-3: same homework inside one course must share remaining attempts').toBe(first.attemptsLeft);
   expect(same.history,'M-3: same homework inside one course must share its attempt history').toEqual(first.history);
+  const reviewedId=first.history.find(a=>a.status==='reviewed').id;
+  expect(await read('first',reviewedId),'viewing the shared result preserves first placement attempts').toEqual(first);
+  expect(await read('sameCourse',reviewedId),'viewing the shared result preserves second placement attempts').toEqual(same);
+  expect(await read('first'),'result navigation must not create a new attempt').toEqual(first);
+  expect(await read('sameCourse'),'result navigation must keep the shared limit/history').toEqual(same);
 }));
 
 test('HW-scope another course: same homework starts with its own unused attempt',async({browser},testInfo)=>withScope(browser,testInfo,async read=>{

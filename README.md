@@ -46,7 +46,7 @@ M-5 теперь требует три разные ready/playable записи;
 
 ## Домашние задания
 
-`npm run test:homework`: [инструкции и границы покрытия](docs/features/homework.md). 17 зарегистрированных web сценариев: 15 прежних compound/info/history/lifecycle/manual runners (их integration NOT RUN) и два GET-only HW-scope кейса. HW-scope 28.10: 1 FAIL (попытки в одном курсе), 1 PASS (независимый другой курс). Lifecycle требует локального проверенного provision/cleanup adapter, которого пока нет. Native background timer и неопределённые M18/unlinked-only ожидания не заменяются web assertions.
+`npm run test:homework`: [инструкции и границы покрытия](docs/features/homework.md). 17 зарегистрированных web сценариев: 15 прежних compound/info/history/lifecycle/manual runners (их integration NOT RUN) и два GET-only HW-scope кейса. HW-scope 28.10 до исправления: 1 FAIL (попытки в одном курсе), 1 PASS (независимый другой курс). Повторный запуск после исправления: 2 PASS; кейс одного курса дополнен проверкой отсутствия лишнего старта и переходов к общему проверенному результату из обоих размещений. Lifecycle требует локального проверенного provision/cleanup adapter, которого пока нет. Native background timer и неопределённые M18/unlinked-only ожидания не заменяются web assertions.
 
 ## Admin messages и AI
 
