@@ -6,7 +6,7 @@
 |---|---|---|
 | Live | 14 тестов, см. features/live-rooms.md | Live integration/playback/cleanup этой ревизии |
 | Referral core | 24 теста, см. features/referral.md | Live integration, бренды, realdevices, checkout/payout/clipboard |
-| Homework core | 15 сценариев (12 прежних + 3 opt-in manual/rework runner), см. [homework](features/homework.md) | Live fixtures/verified provisioning adapter, integration, native, admin, rework/attachments/deadlines |
+| Homework core | 17 сценариев (12 прежних + 3 opt-in manual/rework runner + 2 GET-only HW-scope), см. [homework](features/homework.md) | Live fixtures/verified provisioning adapter, integration, native, admin, rework/attachments/deadlines |
 | Messages | 2 Chromium mobile geometry cases; [messages](features/messages.md) | Исходный и переносимый integration 12.10 (23:02 Minsk): geometry FAIL×2, предусловия PASS; lifecycle/realtime/native отдельно |
 | Messages PDF student | 1 received-file-link case; [media](features/messages.md#h-1012-media--pdf-web-1012-полученный-pdf) | Исходный 1 FAIL (ссылка отсутствует), переносимый integration 12.10: 1 FAIL, fileLinks=0; voice automation отсутствует |
 | Admin AI | [Контракт accuracy/latency/usage](features/admin-ai.md), suite не реализован | Verified provider/inputs/oracles/roles/usage schema + целевой integration |
