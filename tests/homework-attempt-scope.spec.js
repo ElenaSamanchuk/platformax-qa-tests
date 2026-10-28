@@ -1,5 +1,5 @@
-// Requirement: Valeria28.10.2026: one homework shares attempts inside a course;
-// Ksenia20.10.2026: another course starts that same homework independently.
+// Requirement: Valeria 28.10.2026: one homework shares attempts inside a course;
+// Ksenia 20.10.2026: another course starts that same homework independently.
 const fs = require('fs');
 const {test, expect} = require('@playwright/test');
 const {configuration} = require('../lib/configuration');
