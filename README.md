@@ -56,3 +56,11 @@ regression, original run 12.10 на admin-DLlbi8EX.js выявил clipping на
 все предусловия прошли. Это актуальный дефект UI, не PASS продукта.
 [AI accuracy/latency/usage](docs/features/admin-ai.md) пока описаны как контракт для
 следующего набора: готового AI integration suite нет.
+
+## Фильтры Энциклопедии
+
+`npx playwright test tests/encyclopedia-filters.spec.js`: пять read-only сценариев
+логики OR/AND/исключения оборудования, пустой выдачи и сброса, групп результатов и
+возврата из урока, мобильной шторки 390×844 touch/DPR 3. [Запуск и ограничения](docs/features/encyclopedia-filters.md).
+Набор сравнивает результат с независимым оракулом по текущим facets, а не смысл
+автоматических тегов. Реальные телефоны и native остаются отдельным покрытием.
