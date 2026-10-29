@@ -1,6 +1,22 @@
-# Live-комнаты: отдельный целевой регресс
+# Platformax: общий QA-набор
 
-Переносимый Playwright-набор для Claude Code, Cursor, Codex и человека. Источник — существующий live/autotest; сценарии сохранены, исправлены конкретные пробелы. Это ревизия тестовой системы, а не новый живой QA продукта. Исторические 10/11 у Claude не являются результатом этой версии.
+Один репозиторий, общие правила/configuration/contracts/coordination/fixtures, отдельные feature suites. Работает как технический контекст для Claude Code, Cursor, Codex и человека. Это проверяемый набор конкретных сценариев, а не универсальный runner всего продукта.
+
+Добавление тестов по задаче: [общий старт для разработчика и любой ИИ](docs/ADDING-TESTS.md).
+Новый каркас: `npm run new:feature -- course-access` (отказывается перезаписывать файлы;
+до реализации case падает BLOCKED и не означает готовое покрытие).
+
+| Набор | Команда | Реализовано | Инструкции |
+|---|---|---|---|
+| Live-комнаты | `npm run test:live` | 14 целевых сценариев | [Live](docs/features/live-rooms.md) |
+| Рефералка ядра | `npm run test:referral` | 24: core/admin desktop + mobile 320–390, withdrawal touch | [Referral](docs/features/referral.md) |
+| Messages geometry | `npm run test:messages` | 2 mobile cases; переносимый integration 12.10 23:02 FAIL×2 | [Messages](docs/features/messages.md) |
+| Messages PDF student | `npm run test:messages:media` | 1 file-link case; исходный и переносимый 1 FAIL: ссылка отсутствует | [Messages media](docs/features/messages.md#h-1012-media--pdf-web-1012-полученный-pdf) |
+| Общий smoke | `npm run test:smoke` | Выборка S-1/H-1/Вход и RF-1/2/3 | Обе feature инструкции; пропуски = пробел |
+| Контракты/locks | `npm run test:unit` | 20 pure/local проверок, без браузера | [Validation](docs/VALIDATION.md) |
+| Всё реализованное | `npm test` | Все зарегистрированные suites, не весь QA | Сначала согласованный слот/roles/env |
+
+[Индекс покрытия и план базового регресса](docs/FEATURE-INDEX.md). Существующий auth внутри live role setup не объявляется отдельным базовым auth тестом. Registration/product/course/tariff пока только план миграции старых тестов после расследования контрактов.
 
 ## Установка и безопасный запуск
 
@@ -16,7 +32,7 @@ npm run test:list
 
 Человек заполняет `.env` локально. BASE_URL допускает только HTTPS origin `*.test.nn99.ru`, без пути/логина/порта. OWNER_STORAGE_STATE — путь к приватному файлу, передаваемому отдельно; истёкшая сессия не доказывает баг входа. Ученик A не имеет PRODUCT_ID, B имеет; сотрудник имеет только просмотр. Убедиться в этом по серверным данным до прогона. Входы/OTP/ключи вводит человек, агент их не вводит.
 
-До `npm test` договориться с активными QA о времени, общей учётке и данных. Записать разрешение/владельца в ресурсном файле команды. Только затем QA_RUN_APPROVED=1, QA_DATA_LOCK_DIR=абсолютный_путь_к_новому_lock. Workers=1 ограничивает один набор, не другие чаты. Существующий lock означает BLOCKED; чужой lock не удалять. `npm test` создаёт собственные QA-AT комнаты; `npm run test:headed` показывает браузер; `npx playwright test -g "H-1|Вход|S-1"` — MVP smoke. M-5 исключён из дешёвого smoke: три запуска записи и обработка требуют отдельного согласования стоимости/ресурсов.
+До `npm run test:live` договориться с активными QA о времени, общей учётке и данных. Записать разрешение/владельца в ресурсном файле команды. Только затем QA_RUN_APPROVED=1, QA_DATA_LOCK_DIR=абсолютный_путь_к_новому_lock. Workers=1 ограничивает один набор, не другие чаты. Существующий lock означает BLOCKED; чужой lock не удалять. `npm run test:live` создаёт собственные QA-AT комнаты; `npm run test:headed` показывает браузер; `npx playwright test -g "H-1|Вход|S-1"` — MVP smoke. M-5 исключён из короткого smoke из-за длительности трёх запусков и обработки. В текущей согласованной задаче запись входит в оплаченный объём; ресурсы/сессии занимать только по очереди. В другой среде сначала подтвердить включённость услуги.
 
 `npm run report` открывает локальный отчёт. Пропуск обязательной роли/PRODUCT_ID означает пробел, а не PASS доступа. После прогона проверить created-rooms-<pid>.json и cleanup-result-<pid>.json: все свои комнаты finished и is_published=false. Комнаты не удаляются. При неуспехе очистки lock остаётся; восстановить только записанные собственные QA ids и сверить сервер, затем снять собственный lock. Аварийное завершение процесса не гарантирует afterAll.
 
@@ -26,4 +42,32 @@ npm run test:list
 
 M-5 теперь требует три разные ready/playable записи; это серверный признак готовности, **не доказательство воспроизведения видео**. Реальный play, рост currentTime, звук и видимость содержимого проверяются отдельно. После смены API сверить контракт из docs/REQUIREMENTS.md.
 
-Начать с [RULES.md](RULES.md), [требований](docs/REQUIREMENTS.md), [плана](docs/WORKFLOW.md), [валидации](docs/VALIDATION.md). Человеческий отчёт ревизии передаётся отдельно от публичного кода. Интеграционный набор в этой ревизии не запускался.
+Начать с [RULES.md](RULES.md), [требований](docs/REQUIREMENTS.md), [плана](docs/WORKFLOW.md), [валидации](docs/VALIDATION.md). Человеческий отчёт ревизии передаётся отдельно от публичного кода. Результат конкретного integration прогона указан в feature инструкции; незапущенные suites не считаются PASS.
+
+## Домашние задания
+
+`npm run test:homework`: [инструкции и границы покрытия](docs/features/homework.md). 17 зарегистрированных web сценариев: 15 прежних compound/info/history/lifecycle/manual runners (их integration NOT RUN) и два GET-only HW-scope кейса. HW-scope 28.10 до исправления: 1 FAIL (попытки в одном курсе), 1 PASS (независимый другой курс). Повторный запуск после исправления: 2 PASS; кейс одного курса дополнен проверкой отсутствия лишнего старта и переходов к общему проверенному результату из обоих размещений. Lifecycle требует локального проверенного provision/cleanup adapter, которого пока нет. Native background timer и неопределённые M18/unlinked-only ожидания не заменяются web assertions.
+
+## Admin messages и AI
+
+[Messages](docs/features/messages.md): перенос реально выполненного M-1009-02 geometry
+regression, original run 12.10 на admin-DLlbi8EX.js выявил clipping на 320/390 (2 FAIL).
+Переносимая ревизия отдельно выполнена 12.10 в 23:02 Minsk: 2 FAIL только geometry,
+все предусловия прошли. Это актуальный дефект UI, не PASS продукта.
+[AI accuracy/latency/usage](docs/features/admin-ai.md) пока описаны как контракт для
+следующего набора: готового AI integration suite нет.
+
+## Фильтры Энциклопедии
+
+`npx playwright test tests/encyclopedia-filters.spec.js`: пять read-only сценариев
+логики OR/AND/исключения оборудования, пустой выдачи и сброса, групп результатов и
+возврата из урока, мобильной шторки 390×844 touch/DPR 3. [Запуск и ограничения](docs/features/encyclopedia-filters.md).
+Набор сравнивает результат с независимым оракулом по текущим facets, а не смысл
+автоматических тегов. Реальные телефоны и native остаются отдельным покрытием.
+
+## ПоповичФит: предусловия ретеста приложения
+
+`npx playwright test tests/popovichfit-fixture.spec.js`: три GET-only проверки
+premium-фикстуры и реферального экрана desktop/mobile 390. Отдельный Python replay
+проверяет порог 90% в сохранённых ответах трекинга. [Запуск и ограничения](docs/features/popovichfit-fixture.md).
+Это веб-эталон и проверка trace, а не автономное нативное тестирование приложения.
