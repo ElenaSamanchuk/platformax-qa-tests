@@ -64,3 +64,10 @@ regression, original run 12.10 на admin-DLlbi8EX.js выявил clipping на
 возврата из урока, мобильной шторки 390×844 touch/DPR 3. [Запуск и ограничения](docs/features/encyclopedia-filters.md).
 Набор сравнивает результат с независимым оракулом по текущим facets, а не смысл
 автоматических тегов. Реальные телефоны и native остаются отдельным покрытием.
+
+## ПоповичФит: предусловия ретеста приложения
+
+`npx playwright test tests/popovichfit-fixture.spec.js`: три GET-only проверки
+premium-фикстуры и реферального экрана desktop/mobile 390. Отдельный Python replay
+проверяет порог 90% в сохранённых ответах трекинга. [Запуск и ограничения](docs/features/popovichfit-fixture.md).
+Это веб-эталон и проверка trace, а не автономное нативное тестирование приложения.
