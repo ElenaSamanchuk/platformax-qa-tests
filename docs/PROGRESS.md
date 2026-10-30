@@ -23,3 +23,12 @@ Read-only аудит kinezio-hw-qa и текущих независимых ДЗ
 Локальные проверки: unit12/12PASS, discovery50=14live+24referral+12HW, syntax/diff PASS. IntegrationNOT RUN, телефоны/стенд не изменялись. H17 требует отдельной historical fixture (earlier reviewed +latest on_review), HW1/2 fresh untimed. Нет adapter/manifest =BLOCKED/SKIPPED coverage, не PASS. M18/unlinked-only остаются неизвестным контрактом; M-CX01 требует native background/resume и не закрыт Playwright. Новые зависимости/платные сервисы не добавлены.
 
 Следующий шаг: подтвердить данные/селекторы своей compound fixture, реализовать и отдельно проверить локальный provision/cleanup adapter с журналом до mutations и server verify; согласовать слот, selective integration; сохранить фактический результат и cleanup. Продуктовый HTML не задерживать ради этого шага.
+# 30.10.2026 — Student: публикация проверенного read-only home smoke
+
+Переиспользован без изменения байтов Python runner из текущего QA Student.
+Локальные6guard self-check PASS; исходный live Student0.1.0(6) PASS/exit0 до
+переноса, происхождение и границы в docs/features/native-home-smoke.md. Приватные
+config/session/UDID/source/results не перенесены. На телефоне при переносе не
+запускался: им эксклюзивно пользуется агент завершающего QA. Playwright suites,
+CI, чужие modified/untracked в основном worktree не изменены. Новый code branch
+публикует только generic helper и инструкции, не отчёты и данные.

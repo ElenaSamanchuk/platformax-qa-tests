@@ -1,5 +1,9 @@
 # Platformax: общий QA-набор
 
+iOS read-only CLI главной: [native home smoke](docs/features/native-home-smoke.md),
+`python3 scripts/native_home_smoke.py --self-check`. Узкий live Student6 PASS30.10;
+учебный регресс и другие native-приложения этим запуском не покрыты.
+
 Один репозиторий, общие правила/configuration/contracts/coordination/fixtures, отдельные feature suites. Работает как технический контекст для Claude Code, Cursor, Codex и человека. Это проверяемый набор конкретных сценариев, а не универсальный runner всего продукта.
 
 Добавление тестов по задаче: [общий старт для разработчика и любой ИИ](docs/ADDING-TESTS.md).

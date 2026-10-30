@@ -1,5 +1,13 @@
 # Feature index и базовый регресс
 
+## Дополнение30.10: узкий native read-only CLI
+
+[iOS home smoke](features/native-home-smoke.md): foreground/build/обязательные
+подписи главной, существующая WDA-сессия, без запуска/нажатий/изменений. Шесть
+локальных guard-проверок и один live Student6 PASS; это не автоматизация учебных
+сценариев, Admin или Kinezio. Историческая строка об отсутствии native automation
+ниже относится к охвату09.10, до этого ограниченного дополнения.
+
 Общий слой: playwright.config.js, env placeholders, lib/configuration.js (origin/roles/private sessions), lib/qa-data.js (QA titles), tests/fixtures/api.js (same-origin XSRF transport), lib/contracts.js (test origin/recordings/restore), lib/coordination.js (один кооперативный lock), tests/fixtures/read-only.js (блокирование mutations и originalPNG), lib/referral-contracts.js. Feature-specific live role/API helpers остаются в tests/helpers.js; они не являются универсальными клиентами всех API.
 
 | Область | Реализовано | Что ещё нужно |
